@@ -1,22 +1,28 @@
 import { NextResponse } from "next/server";
 
-let students = [
+type Student = {
+  id: number;
+  name: string;
+  email: string;
+};
+
+let students: Student[] = [
   { id: 1, name: "Ali", email: "ali@example.com" },
   { id: 2, name: "Sara", email: "sara@example.com" },
-  { id: 3, name: "Mina", email: "Mina@example.com" },
-  { id: 4, name: "Omid", email: "Omid@example.com" },
-  { id: 5, name: "Fateme", email: "Fateme@example.com" },
-  { id: 6, name: "Amir", email: "Amir@example.com" },
-  { id: 7, name: "Arezoo", email: "Arezoo@example.com" },
-  { id: 8, name: "Malihe", email: "Malihe@example.com" },
-  { id: 9, name: "Farzane", email: "Farzane@example.com" },
-  { id: 10, name: "Afsane", email: "Afsane@example.com" },
-  { id: 11, name: "Arsha", email: "Arsha@example.com" },
-  { id: 12, name: "Ilia", email: "Ilia@example.com" },
-  { id: 13, name: "Aria", email: "Aria@example.com" },
-  { id: 14, name: "Farzin", email: "Farzin@example.com" },
-  { id: 15, name: "Shahrzad", email: "Shahrzad@example.com" },
-  { id: 16, name: "Reza", email: "Reza@example.com" },
+  { id: 3, name: "Mina", email: "mina@example.com" },
+  { id: 4, name: "Omid", email: "omid@example.com" },
+  { id: 5, name: "Fateme", email: "fateme@example.com" },
+  { id: 6, name: "Amir", email: "amir@example.com" },
+  { id: 7, name: "Arezoo", email: "arezoo@example.com" },
+  { id: 8, name: "Malihe", email: "malihe@example.com" },
+  { id: 9, name: "Farzane", email: "farzane@example.com" },
+  { id: 10, name: "Afsane", email: "afsane@example.com" },
+  { id: 11, name: "Arsha", email: "arsha@example.com" },
+  { id: 12, name: "Ilia", email: "ilia@example.com" },
+  { id: 13, name: "Aria", email: "aria@example.com" },
+  { id: 14, name: "Farzin", email: "farzin@example.com" },
+  { id: 15, name: "Shahrzad", email: "shahrzad@example.com" },
+  { id: 16, name: "Reza", email: "reza@example.com" },
 ];
 
 export async function GET() {
@@ -27,26 +33,29 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
 
-    if (!body.name?.trim() || !body.email?.trim()) {
+    const name = body.name?.trim();
+    const email = body.email?.trim().toLowerCase();
+
+    if (!name || !email) {
       return NextResponse.json(
         { error: "Name and email are required" },
-        { status: 400 },
+        { status: 400 }
       );
     }
 
-    const newStudent = {
+    const newStudent: Student = {
       id: Date.now(),
-      name: body.name.trim(),
-      email: body.email.trim(),
+      name,
+      email,
     };
 
     students.push(newStudent);
 
     return NextResponse.json(newStudent, { status: 201 });
-  } catch (err) {
+  } catch {
     return NextResponse.json(
       { error: "Failed to add student" },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }
@@ -60,11 +69,23 @@ export async function DELETE(req: Request) {
       return NextResponse.json({ error: "Invalid id" }, { status: 400 });
     }
 
+    const exists = students.some((student) => student.id === id);
+
+    if (!exists) {
+      return NextResponse.json(
+        { error: "Student not found" },
+        { status: 404 }
+      );
+    }
+
     students = students.filter((student) => student.id !== id);
 
-    return NextResponse.json({ message: "Deleted" });
-  } catch (err) {
-    return NextResponse.json({ error: "Failed to delete" }, { status: 500 });
+    return NextResponse.json({ message: "Student deleted successfully" });
+  } catch {
+    return NextResponse.json(
+      { error: "Failed to delete student" },
+      { status: 500 }
+    );
   }
 }
 
@@ -74,30 +95,42 @@ export async function PUT(req: Request) {
     const id = Number(searchParams.get("id"));
     const body = await req.json();
 
+    const name = body.name?.trim();
+    const email = body.email?.trim().toLowerCase();
+
     if (!id) {
       return NextResponse.json({ error: "Invalid id" }, { status: 400 });
     }
-    if (!body.name?.trim() || !body.email?.trim()) {
+
+    if (!name || !email) {
       return NextResponse.json(
         { error: "Name and email are required" },
-        { status: 400 },
+        { status: 400 }
       );
     }
-    const studentIndex = students.findIndex((student) => student.id === id);
+
+    const studentIndex = students.findIndex(
+      (student) => student.id === id
+    );
 
     if (studentIndex === -1) {
-      return NextResponse.json({ error: "Student not found" }, { status: 404 });
+      return NextResponse.json(
+        { error: "Student not found" },
+        { status: 404 }
+      );
     }
+
     students[studentIndex] = {
       ...students[studentIndex],
-      name: body.name.trim(),
-      email: body.email.trim(),
+      name,
+      email,
     };
+
     return NextResponse.json(students[studentIndex]);
-  } catch (err) {
+  } catch {
     return NextResponse.json(
       { error: "Failed to update student" },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }

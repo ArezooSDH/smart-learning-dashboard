@@ -34,7 +34,7 @@ type StudentFormProps = {
 export default function StudentForm({
   defaultValues,
   onSubmit,
-  loading,
+  loading = false,
   submitText = "Submit",
 }: StudentFormProps) {
   const form = useForm<StudentFormValues>({
@@ -64,7 +64,11 @@ export default function StudentForm({
             <FormItem>
               <FormLabel>Name</FormLabel>
               <FormControl>
-                <Input placeholder="Student name" {...field} />
+                <Input
+                  placeholder="Student name"
+                  autoComplete="name"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -78,7 +82,12 @@ export default function StudentForm({
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input placeholder="Student email" {...field} />
+                <Input
+                  type="email"
+                  placeholder="Student email"
+                  autoComplete="email"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>

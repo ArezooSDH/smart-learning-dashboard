@@ -112,7 +112,10 @@ export default function DataTable<T extends { id: number }>({
     return sortable;
   }, [filteredData, sortField, sortOrder]);
 
-  const totalPages = Math.ceil(sortedData.length / pageSize);
+const totalPages = Math.max(
+  1,
+  Math.ceil(sortedData.length / pageSize),
+);
 
   const paginatedData = useMemo(() => {
     const start = (currentPage - 1) * pageSize;

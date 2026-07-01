@@ -11,9 +11,8 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
-import StudentForm from "@/app/components/StudentForm";
+import StudentForm, { StudentFormValues } from "@/app/components/StudentForm";
 import { Plus } from "lucide-react";
 
 type Student = {
@@ -36,97 +35,74 @@ export default function StudentsPage() {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
 
   useEffect(() => {
-    fetchData();
+    fetchStudents();
   }, []);
 
-  const fetchData = async () => {
+  const fetchStudents = async () => {
     try {
       setLoading(true);
       const { data } = await axios.get("/api/students");
       setStudents(data);
     } catch (error) {
-      console.error("Error fetching students:", error);
-      toast.error("Failed to load students.");
+      console.error(error);
+      toast.error("Failed to load students");
     } finally {
       setLoading(false);
     }
   };
 
-  // عملیات افزودن دانشجو
-  const handleAddStudent = async (values: { name: string; email: string }) => {
-  try {
-    const res = await axios.post("/api/students", values);
-
-    if (res.status === 201) {
-      await fetchData();
+  const handleAddStudent = async (values: StudentFormValues) => {
+    try {
+      await axios.post("/api/students", values);
       toast.success("Student added successfully 🎉");
       setIsAddDialogOpen(false);
+      fetchStudents();
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to add student");
     }
-  } catch (err) {
-    toast.error("Failed to add student.");
-    console.error(err);
-  }
-};
+  };
 
+  const handleUpdateStudent = async (values: StudentFormValues) => {
+    if (!editingStudent) return;
 
-  // عملیات ویرایش دانشجو
-  const handleUpdateStudent = async (values: { name: string; email: string }) => {
-  if (!editingStudent) return;
-
-  try {
-    const res = await axios.put(`/api/students?id=${editingStudent.id}`, values);
-
-    if (res.status === 200) {
-      await fetchData();
+    try {
+      await axios.put(`/api/students?id=${editingStudent.id}`, values);
       toast.success("Student updated successfully ✨");
       setEditingStudent(null);
+      fetchStudents();
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to update student");
     }
-  } catch (err) {
-    toast.error("Failed to update student.");
-    console.error(err);
-  }
-};
-
+  };
 
   const handleDelete = async (id: number) => {
     try {
       await axios.delete(`/api/students?id=${id}`);
-      await fetchData();
-      toast.success("Student deleted successfully.");
-    } catch (err) {
-      toast.error("Could not delete the student.");
-      console.error(err);
+      toast.success("Student deleted successfully");
+      fetchStudents();
+    } catch (error) {
+      console.error(error);
+      toast.error("Could not delete the student");
     }
   };
 
   return (
-    <div className="text-cyan-800 w-full flex flex-col items-center">
-      <div className="w-full max-w-4xl mx-auto mt-10 p-4 flex flex-col space-y-6">
+    <div className="w-full flex flex-col items-center text-cyan-800">
+      <div className="w-full max-w-4xl mx-auto mt-10 p-4 flex flex-col gap-6">
+        
+        {/* header */}
         <div className="flex justify-between items-center">
           <h2 className="text-3xl font-bold tracking-tight">Students</h2>
 
-          {/* مدال افزودن دانشجو */}
-          <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-            <Button
-              onClick={() => setIsAddDialogOpen(true)}
-              className="bg-black hover:bg-slate-800 text-white flex items-center gap-2 rounded-lg"
-            >
-              <Plus className="w-4 h-4" /> Add Student
-            </Button>
-            <DialogContent className="sm:max-w-[425px]">
-              <DialogHeader>
-                <DialogTitle>Add New Student</DialogTitle>
-                <DialogDescription>
-                  Enter the student details here.
-                </DialogDescription>
-              </DialogHeader>
-
-              <StudentForm
-                onSubmit={handleAddStudent}
-                submitText="Create Student"
-              />
-            </DialogContent>
-          </Dialog>
+          <Button
+            onClick={() => setIsAddDialogOpen(true)}
+            className="flex items-center gap-2"
+          >
+            <Plus size={16} />
+            Add Student
+          </Button>
         </div>
 
         <DataTable<Student>
@@ -139,18 +115,35 @@ export default function StudentsPage() {
           searchPlaceholder="Search students..."
         />
 
-        {/* مدال ویرایش دانشجو */}
+        {/* Add Student Dialog */}
+        <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+          <DialogContent className="sm:max-w-[420px]">
+            <DialogHeader>
+              <DialogTitle>Add New Student</DialogTitle>
+              <DialogDescription>
+                Enter student information below.
+              </DialogDescription>
+            </DialogHeader>
+
+            <StudentForm
+              onSubmit={handleAddStudent}
+              submitText="Create Student"
+            />
+          </DialogContent>
+        </Dialog>
+
+        {/* Edit Student Dialog */}
         <Dialog
           open={editingStudent !== null}
           onOpenChange={(open) => {
             if (!open) setEditingStudent(null);
           }}
         >
-          <DialogContent>
+          <DialogContent className="sm:max-w-[420px]">
             <DialogHeader>
               <DialogTitle>Edit Student</DialogTitle>
               <DialogDescription>
-                Make changes to the student's profile here.
+                Update the student information.
               </DialogDescription>
             </DialogHeader>
 

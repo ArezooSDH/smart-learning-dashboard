@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import StatCard from "../components/StatCard";
 import axios from "axios";
+import { toast } from "sonner";
+import StatCard from "../components/StatCard";
 
 type Student = {
   id: number;
@@ -22,11 +23,13 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchData();
+    fetchDashboardData();
   }, []);
 
-  const fetchData = async () => {
+  const fetchDashboardData = async () => {
     try {
+      setLoading(true);
+
       const [studentsRes, coursesRes] = await Promise.all([
         axios.get("/api/students"),
         axios.get("/api/courses"),
@@ -34,19 +37,44 @@ export default function DashboardPage() {
 
       setStudents(studentsRes.data);
       setCourses(coursesRes.data);
-    } catch (err) {
-      console.error(err);
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to load dashboard data");
     } finally {
       setLoading(false);
     }
   };
 
-const latestStudent = [...students].sort((a, b) => a.id - b.id).at(-1);
+  const latestStudent = [...students]
+    .sort((a, b) => a.id - b.id)
+    .at(-1);
 
-  if (loading) return <p className="p-10">Loading...</p>;
+  if (loading) {
+    return (
+      <div className="p-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <StatCard
+          title="Total Students"
+          value="..."
+          color="text-blue-600"
+        />
+
+        <StatCard
+          title="Total Courses"
+          value="..."
+          color="text-green-600"
+        />
+
+        <StatCard
+          title="Latest Student"
+          value="Loading..."
+          color="text-purple-600"
+        />
+      </div>
+    );
+  }
 
   return (
-    <div className="p-10 grid grid-cols-3 gap-6">
+    <div className="p-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       <StatCard
         title="Total Students"
         value={students.length}
@@ -62,6 +90,7 @@ const latestStudent = [...students].sort((a, b) => a.id - b.id).at(-1);
       <StatCard
         title="Latest Student"
         value={latestStudent ? latestStudent.name : "No Students"}
+        color="text-purple-600"
       />
     </div>
   );

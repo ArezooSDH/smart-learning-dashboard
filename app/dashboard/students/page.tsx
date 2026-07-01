@@ -117,7 +117,7 @@ export default function StudentsPage() {
 
         {/* Add Student Dialog */}
         <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-          <DialogContent className="sm:max-w-[420px]">
+          <DialogContent className="sm:max-w-106.25">
             <DialogHeader>
               <DialogTitle>Add New Student</DialogTitle>
               <DialogDescription>
@@ -139,7 +139,7 @@ export default function StudentsPage() {
             if (!open) setEditingStudent(null);
           }}
         >
-          <DialogContent className="sm:max-w-[420px]">
+          <DialogContent className="sm:max-w-106.25">
             <DialogHeader>
               <DialogTitle>Edit Student</DialogTitle>
               <DialogDescription>

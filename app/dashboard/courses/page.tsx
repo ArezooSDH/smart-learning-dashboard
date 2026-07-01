@@ -134,7 +134,7 @@ export default function CoursesPage() {
 
         {/* دیالوگ ثبت دوره جدید */}
         <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
-          <DialogContent className="sm:max-w-[425px]">
+          <DialogContent className="sm:max-w-106.25">
             <DialogHeader>
               <DialogTitle>Add New Course</DialogTitle>
               <DialogDescription>
@@ -153,7 +153,7 @@ export default function CoursesPage() {
             if (!open) setEditingCourse(null);
           }}
         >
-          <DialogContent className="sm:max-w-[425px]">
+          <DialogContent className="sm:max-w-106.25">
             <DialogHeader>
               <DialogTitle>Edit Course</DialogTitle>
               <DialogDescription>

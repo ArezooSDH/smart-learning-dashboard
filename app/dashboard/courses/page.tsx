@@ -111,7 +111,7 @@ export default function CoursesPage() {
     <div className="text-cyan-800 w-full flex flex-col items-center">
       <div className="w-full max-w-4xl mx-auto mt-10 p-4 flex flex-col space-y-6">
         {/* هدر صفحه: شامل عنوان و دکمه افزودن کاملاً شبیه به صفحه دانشجویان */}
-        <div className="flex justify-between items-center w-full pb-4">
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <h2 className="text-3xl font-bold">Courses</h2>
           <Button
             onClick={() => setIsAddOpen(true)}
@@ -134,7 +134,7 @@ export default function CoursesPage() {
 
         {/* دیالوگ ثبت دوره جدید */}
         <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
-          <DialogContent className="sm:max-w-106.25">
+          <DialogContent className="w-[95vw] sm:max-w-106.25">
             <DialogHeader>
               <DialogTitle>Add New Course</DialogTitle>
               <DialogDescription>

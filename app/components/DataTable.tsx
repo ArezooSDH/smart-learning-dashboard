@@ -112,10 +112,7 @@ export default function DataTable<T extends { id: number }>({
     return sortable;
   }, [filteredData, sortField, sortOrder]);
 
-const totalPages = Math.max(
-  1,
-  Math.ceil(sortedData.length / pageSize),
-);
+  const totalPages = Math.max(1, Math.ceil(sortedData.length / pageSize));
 
   const paginatedData = useMemo(() => {
     const start = (currentPage - 1) * pageSize;
@@ -221,95 +218,96 @@ const totalPages = Math.max(
               </div>
             )}
           </div>
-
-          <table className="min-w-full">
-            <thead className="bg-gray-50/50 border-b border-gray-200">
-              <tr>
-                {columns.map((col, index) => (
-                  <th
-                    key={index}
-                    onClick={() =>
-                      col.sortable && col.accessor && handleSort(col.accessor)
-                    }
-                    className={`px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider ${
-                      col.sortable
-                        ? "cursor-pointer select-none hover:text-blue-600"
-                        : ""
-                    }`}
-                  >
-                    <div className="flex items-center gap-2">
-                      {col.header}
-                      {col.sortable &&
-                        col.accessor &&
-                        getSortIcon(col.accessor)}
-                    </div>
-                  </th>
-                ))}
-
-                {(onEdit || onDelete) &&
-                  !columns.some((c) => c.header === "Actions") && (
-                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
-                      Actions
-                    </th>
-                  )}
-              </tr>
-            </thead>
-
-            <tbody className="divide-y divide-gray-100">
-              {loading ? (
-                renderSkeletonRows()
-              ) : paginatedData.length === 0 ? (
+          <div className="w-full overflow-x-auto">
+            <table className="w-full min-w-150">
+              <thead className="bg-gray-50/50 border-b border-gray-200">
                 <tr>
-                  <td
-                    colSpan={columns.length + (onEdit || onDelete ? 1 : 0)}
-                    className="p-12 text-center text-gray-400 italic"
-                  >
-                    No records found.
-                  </td>
+                  {columns.map((col, index) => (
+                    <th
+                      key={index}
+                      onClick={() =>
+                        col.sortable && col.accessor && handleSort(col.accessor)
+                      }
+                      className={`px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider ${
+                        col.sortable
+                          ? "cursor-pointer select-none hover:text-blue-600"
+                          : ""
+                      }`}
+                    >
+                      <div className="flex items-center gap-2">
+                        {col.header}
+                        {col.sortable &&
+                          col.accessor &&
+                          getSortIcon(col.accessor)}
+                      </div>
+                    </th>
+                  ))}
+
+                  {(onEdit || onDelete) &&
+                    !columns.some((c) => c.header === "Actions") && (
+                      <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+                        Actions
+                      </th>
+                    )}
                 </tr>
-              ) : (
-                paginatedData.map((row) => (
-                  <tr
-                    key={row.id}
-                    className="hover:bg-blue-50/30 transition-colors group"
-                  >
-                    {columns.map((col, index) => (
-                      <td
-                        key={index}
-                        className="px-6 py-4 text-sm text-gray-700 font-medium"
-                      >
-                        {col.accessor ? String(row[col.accessor]) : null}
+              </thead>
 
-                        {!col.accessor && col.header === "Actions" && (
-                          <div className="flex items-center gap-3 opacity-60 group-hover:opacity-100 transition-all">
-                            {onEdit && (
-                              <button
-                                onClick={() => onEdit(row)}
-                                className="flex items-center gap-1 text-blue-500 hover:text-blue-700"
-                              >
-                                <Pencil size={16} />
-                                Edit
-                              </button>
-                            )}
-
-                            {onDelete && (
-                              <button
-                                onClick={() => setDeleteId(row.id)}
-                                className="flex items-center gap-1 text-red-500 hover:text-red-700"
-                              >
-                                <Trash2 size={16} />
-                                Delete
-                              </button>
-                            )}
-                          </div>
-                        )}
-                      </td>
-                    ))}
+              <tbody className="divide-y divide-gray-100">
+                {loading ? (
+                  renderSkeletonRows()
+                ) : paginatedData.length === 0 ? (
+                  <tr>
+                    <td
+                      colSpan={columns.length + (onEdit || onDelete ? 1 : 0)}
+                      className="p-12 text-center text-gray-400 italic"
+                    >
+                      No records found.
+                    </td>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+                ) : (
+                  paginatedData.map((row) => (
+                    <tr
+                      key={row.id}
+                      className="hover:bg-blue-50/30 transition-colors group"
+                    >
+                      {columns.map((col, index) => (
+                        <td
+                          key={index}
+                          className="px-6 py-4 text-sm text-gray-700 font-medium"
+                        >
+                          {col.accessor ? String(row[col.accessor]) : null}
+
+                          {!col.accessor && col.header === "Actions" && (
+                            <div className="flex items-center gap-3 opacity-60 group-hover:opacity-100 transition-all">
+                              {onEdit && (
+                                <button
+                                  onClick={() => onEdit(row)}
+                                  className="flex items-center gap-1 text-blue-500 hover:text-blue-700"
+                                >
+                                  <Pencil size={16} />
+                                  Edit
+                                </button>
+                              )}
+
+                              {onDelete && (
+                                <button
+                                  onClick={() => setDeleteId(row.id)}
+                                  className="flex items-center gap-1 text-red-500 hover:text-red-700"
+                                >
+                                  <Trash2 size={16} />
+                                  Delete
+                                </button>
+                              )}
+                            </div>
+                          )}
+                        </td>
+                      ))}
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
 
         <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 flex flex-col sm:flex-row items-center justify-between gap-4">

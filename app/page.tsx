@@ -1,22 +1,30 @@
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
 
 export default function Home() {
   return (
     <main className="min-h-screen flex items-center justify-center bg-gray-100 px-6">
       <div className="text-center max-w-2xl">
-        <h1 className="text-5xl font-bold tracking-tight text-gray-900">
+        <h1 className="text-4xl md:text-5xl font-bold">
           Smart Learning Dashboard
         </h1>
 
-        <p className="mt-6 text-lg text-gray-600 leading-relaxed">
-          A modern dashboard for managing students, courses, and instructors
-          built with Next.js, TypeScript, and TailwindCSS.
+        <p className="mt-4 text-gray-600">
+          Manage students and courses with a modern dashboard.
         </p>
 
-        <div className="mt-8 flex items-center justify-center gap-4">
-          <Link href="/dashboard">
-            <Button size="lg">Open Dashboard</Button>
+        <div className="mt-8 flex gap-4 justify-center flex-wrap">
+          <Link
+            href="/login"
+            className="px-6 py-2 bg-black text-white rounded hover:bg-gray-800 transition"
+          >
+            Login
+          </Link>
+
+          <Link
+            href="/signup"
+            className="px-6 py-2 border border-black rounded hover:bg-gray-200 transition"
+          >
+            Sign Up
           </Link>
         </div>
       </div>

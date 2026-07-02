@@ -93,7 +93,7 @@ export default function StudentsPage() {
       <div className="w-full max-w-4xl mx-auto mt-10 p-4 flex flex-col gap-6">
         
         {/* header */}
-        <div className="flex justify-between items-center">
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <h2 className="text-3xl font-bold tracking-tight">Students</h2>
 
           <Button
@@ -117,7 +117,7 @@ export default function StudentsPage() {
 
         {/* Add Student Dialog */}
         <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-          <DialogContent className="sm:max-w-106.25">
+          <DialogContent className="w-[95vw] sm:max-w-106.25">
             <DialogHeader>
               <DialogTitle>Add New Student</DialogTitle>
               <DialogDescription>

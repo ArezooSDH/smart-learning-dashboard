@@ -1,99 +1,66 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { ReactNode, useState } from "react";
-import {
-  LayoutDashboard,
-  Users,
-  BookOpen,
-  GraduationCap,
-  Menu,
-  X,
-} from "lucide-react";
-
-type LinkItem = {
-  href: string;
-  label: string;
-  icon: any;
-};
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { getCurrentUser, logout } from "@/lib/auth";
 
 export default function DashboardLayout({
   children,
 }: {
-  children: ReactNode;
+  children: React.ReactNode;
 }) {
-  const pathname = usePathname();
-  const [open, setOpen] = useState(false);
+  const router = useRouter();
+  const [user, setUser] = useState<null | { name: string }>(null);
 
-  const links: LinkItem[] = [
-    { href: "/dashboard", label: "Overview", icon: LayoutDashboard },
-    { href: "/dashboard/students", label: "Students", icon: Users },
-    { href: "/dashboard/courses", label: "Courses", icon: BookOpen },
-    { href: "/dashboard/teachers", label: "Teachers", icon: GraduationCap },
-  ];
+  useEffect(() => {
+    const currentUser = getCurrentUser();
+    if (!currentUser) {
+      router.push("/login");
+    } else {
+      setUser(currentUser);
+    }
+  }, [router]);
+
+  const handleLogout = () => {
+    logout();
+    router.push("/login");
+  };
+
+  if (!user) return null;
 
   return (
-    <div className="flex min-h-screen bg-gray-100">
+    <div className="flex min-h-screen">
+      <aside className="w-64 bg-gray-900 text-white p-6 flex flex-col justify-between">
+        <div>
+          <h2 className="text-xl font-bold mb-6">Dashboard</h2>
 
-      {/* mobile top bar */}
-      <div className="lg:hidden p-4 border-b bg-white w-full">
-        <button
-          onClick={() => setOpen(true)}
-          className="p-2 rounded hover:bg-gray-100"
-        >
-          <Menu />
-        </button>
-      </div>
-
-      {/* sidebar */}
-      <aside
-        className={`fixed lg:static top-0 left-0 w-64 bg-white border-r p-6 transform transition-transform z-50
-        ${open ? "translate-x-0 h-full" : "-translate-x-full"} 
-        lg:translate-x-0`}
-      >
-        {/* close mobile */}
-        <div className="lg:hidden flex justify-end mb-4">
-          <button onClick={() => setOpen(false)}>
-            <X />
-          </button>
+          <nav className="space-y-3">
+            <Link href="/dashboard">Home</Link>
+            <br />
+            <Link href="/dashboard/students">Students</Link>
+            <br />
+            <Link href="/dashboard/courses">Courses</Link>
+          </nav>
         </div>
 
-        <h2 className="text-2xl font-bold mb-8 text-blue-600">
-          Learning Dashboard
-        </h2>
+        <div className="space-y-3">
+          <p className="text-sm text-gray-400">
+            {user.name}
+          </p>
 
-        <nav className="space-y-2">
-          {links.map((link) => {
-            const Icon = link.icon;
-
-            const active =
-              link.href === "/dashboard"
-                ? pathname === "/dashboard"
-                : pathname.startsWith(link.href);
-
-            return (
-              <Link
-                key={link.href}
-                href={link.href}
-                onClick={() => setOpen(false)}
-                className={`flex items-center gap-3 p-2 rounded transition
-                  ${
-                    active
-                      ? "bg-blue-100 text-blue-700 font-semibold"
-                      : "text-gray-600 hover:bg-gray-50"
-                  }`}
-              >
-                <Icon size={18} />
-                {link.label}
-              </Link>
-            );
-          })}
-        </nav>
+          <button
+            onClick={handleLogout}
+            className="w-full bg-white text-black py-2 rounded hover:bg-gray-200 transition"
+          >
+            Logout
+          </button>
+        </div>
       </aside>
 
-      {/* main content */}
-      <main className="flex-1 p-10">{children}</main>
+      <main className="flex-1 p-8 bg-gray-100 text-gray-900">
+        {children}
+      </main>
     </div>
   );
 }

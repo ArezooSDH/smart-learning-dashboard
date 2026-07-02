@@ -45,24 +45,14 @@ export default function DashboardPage() {
     }
   };
 
-  const latestStudent = [...students]
-    .sort((a, b) => a.id - b.id)
-    .at(-1);
+  const latestStudent = [...students].sort((a, b) => a.id - b.id).at(-1);
 
   if (loading) {
     return (
-      <div className="p-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <StatCard
-          title="Total Students"
-          value="..."
-          color="text-blue-600"
-        />
+      <div className="p-4 md:p-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+        <StatCard title="Total Students" value="..." color="text-blue-600" />
 
-        <StatCard
-          title="Total Courses"
-          value="..."
-          color="text-green-600"
-        />
+        <StatCard title="Total Courses" value="..." color="text-green-600" />
 
         <StatCard
           title="Latest Student"
